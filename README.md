@@ -28,12 +28,18 @@ in the headers will return a JSON dictionary with the following information:
 {
 	"success": "true",
 	"id": "<ID>",
-	"link": "https://<HOSTNAME>/l/<ID>"
+	"link": "https://<HOSTNAME>/l/<ID>",
+	"private_key": "<PRIVATEKEY>"
 }
 ```
 
 If the URL supplied via the `link` parameter is invalid, an HTTP Status `400` will
-be returned. 
+be returned.
+
+The `success` variable indicates whether the action succeeded, the `id` variable contains
+the unique identifier of the shortened link, the `link` variable contains the publicly
+accessible shortened URL, and the `private_key` variable contains a Private Key, used
+solely for viewing statistics about that Link ID.
 
 ## How to run ShorTor
 
