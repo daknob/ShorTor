@@ -55,6 +55,31 @@ def redirectToLink(linkid):
 		fout.close()
 	return redirect(open(MainFile, "r").read())
 
+@app.route('/stats/<linkid>/<privkey>')
+def showStats(linkid, privkey):
+	for char in linkid:
+		if(char not in LINK_ID_CHARSET):
+			return "Invalid Link ID", 400
+	for char in privkey:
+		if(char not in LINK_ID_CHARSET):
+			return "Invalid Private Key", 400
+	A = linkid[0:2]
+	B = linkid[2:4]
+	MainFile = "links/" + A + "/" + B + "/" + linkid
+	if(not os.path.isfile(MainFile)):
+		return "No such Link ID", 404
+	try:
+		ActPriv = open(MainFile + ".privkey", "r").read()
+	except:
+		return "Link ID has no Private Key", 400
+	if ( not ( ActPriv == privkey ) ):
+		return "Invalid Private Key for Link ID", 403
+	try:
+		Views = open(MainFile + ".views", "r").read()
+	except:
+		Views = 0
+	return render_template("stats.html", title=TITLE, views=Views)
+
 @app.route('/v/<linkid>/<privkey>')
 def viewLinkID(linkid, privkey):
 	for char in linkid:
