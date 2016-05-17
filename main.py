@@ -39,6 +39,18 @@ def redirectToLink(linkid):
 	MainFile = "links/" + A + "/" + B + "/" + linkid
 	if(not os.path.isfile(MainFile)):
 		return "No such Link ID", 404
+	if(not os.path.isfile(MainFile + ".views")):
+		fout = open(MainFile + ".views", "w+")
+		fout.write("1")
+		fout.close()
+	else:
+		fin = open(MainFile + ".views", "r")
+		views = int(fin.read())
+		fin.close()
+		views += 1
+		fout = open(MainFile + ".views", "w+")
+		fout.write(str(views))
+		fout.close()
 	return redirect(open(MainFile, "r").read())
 
 @app.route('/v/<linkid>')
