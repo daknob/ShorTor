@@ -19,16 +19,10 @@ def index():
 
 @app.route('/new', methods=["POST"])
 def shortenLink():
-	if(not(request.form['link'])):
-		return "Invalid URL", 400
-	if(invalidURL(request.form['link'])):
-		return "Invalid URL", 400
-	ShortID, LinkPath = getLinkID()
-	PrivKey, _ = getLinkID()
-	open(LinkPath, "w+").write(request.form['link'])
-	open(LinkPath + ".privkey", "w+").write(PrivKey)
+	ShortID, PrivKey = shortLink(request)
+	FullURI = getFullURL(ShortID, request)
 	if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
-		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + request.url_root + 'l/' + ShortID + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
+		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + FullURI + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
 	return redirect("/v/" + ShortID + "/" + PrivKey)
 
 @app.route('/l/<linkid>')
@@ -92,6 +86,25 @@ def license():
 	return Response(open("LICENSE", "r").read(), mimetype="text/plain")
 
 #Extra Functions
+
+# shortLink ::	This function will shorten a link and return the Link
+#				ID, the Private Key, as well as the full URL of the
+#				new link.
+def shortLink(rq):
+	if(not(rq.form['link'])):
+		return "Invalid URL", 400
+	if(invalidURL(rq.form['link'])):
+		return "Invalid URL", 400
+	ShortID, LinkPath = getLinkID()
+	PrivKey, _ = getLinkID()
+	open(LinkPath, "w+").write(rq.form['link'])
+	open(LinkPath + ".privkey", "w+").write(PrivKey)
+	return ShortID, PrivKey
+
+# getFullURL ::	This function will return the full shortened link URL
+#				based on the Link ID and the current request object.
+def getFullURL(linkid, rq):
+	return rq.url_root + "l/" + linkid
 
 # invalidURL :: This function will perform some *basic* checks on the
 #				provided URL. It will return True if a URL is invalid
