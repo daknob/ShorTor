@@ -78,7 +78,7 @@ def showStats(linkid, privkey):
 		Views = open(MainFile + ".views", "r").read()
 	except:
 		Views = 0
-	return render_template("stats.html", title=TITLE, views=Views)
+	return render_template("stats.html", title=TITLE, views=Views, version=VERSION)
 
 @app.route('/v/<linkid>/<privkey>')
 def viewLinkID(linkid, privkey):
