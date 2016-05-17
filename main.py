@@ -24,10 +24,12 @@ def shortenLink():
 	if(invalidURL(request.form['link'])):
 		return "Invalid URL", 400
 	ShortID, LinkPath = getLinkID()
+	PrivKey, _ = getLinkID()
 	open(LinkPath, "w+").write(request.form['link'])
+	open(LinkPath + ".privkey", "w+").write(PrivKey)
 	if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
-		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + request.url_root + 'l/' + ShortID + '"\n}', mimetype="text/json")
-	return redirect("/v/" + ShortID)
+		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + request.url_root + 'l/' + ShortID + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
+	return redirect("/v/" + ShortID + "/" + PrivKey)
 
 @app.route('/l/<linkid>')
 def redirectToLink(linkid):
@@ -53,12 +55,12 @@ def redirectToLink(linkid):
 		fout.close()
 	return redirect(open(MainFile, "r").read())
 
-@app.route('/v/<linkid>')
-def viewLinkID(linkid):
+@app.route('/v/<linkid>/<privkey>')
+def viewLinkID(linkid, privkey):
 	for char in linkid:
 		if(char not in LINK_ID_CHARSET):
 			return "Invalid Link ID", 400
-	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION)
+	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION, uid=linkid, privkey = privkey)
 
 @app.route("/MIT")
 def license():
