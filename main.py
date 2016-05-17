@@ -10,7 +10,7 @@ TITLE = "ShorTor"
 LINK_ID_LENGTH = 8
 LINK_ID_CHARSET = "abcdefghijklmnopqrstuvwxyz1234567890"
 
-VERSION = "0.2"
+VERSION = "0.2.1"
 
 #Router
 @app.route('/')
