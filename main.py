@@ -27,9 +27,8 @@ def shortenLink():
 
 @app.route('/l/<linkid>')
 def redirectToLink(linkid):
-	for char in linkid:
-		if(char not in LINK_ID_CHARSET):
-			return "Invalid Link ID", 400
+	if(not isInCSet(linkid, LINK_ID_CHARSET)):
+		return "Invalid Link ID", 400
 	A = linkid[0:2]
 	B = linkid[2:4]
 	MainFile = "links/" + A + "/" + B + "/" + linkid
@@ -51,12 +50,10 @@ def redirectToLink(linkid):
 
 @app.route('/stats/<linkid>/<privkey>')
 def showStats(linkid, privkey):
-	for char in linkid:
-		if(char not in LINK_ID_CHARSET):
-			return "Invalid Link ID", 400
-	for char in privkey:
-		if(char not in LINK_ID_CHARSET):
-			return "Invalid Private Key", 400
+	if(not isInCSet(linkid, LINK_ID_CHARSET)):
+		return "Invalid Link ID", 400
+	if(not isInCSet(privkey, LINK_ID_CHARSET)):
+		return "Invalid Private Key", 400
 	A = linkid[0:2]
 	B = linkid[2:4]
 	MainFile = "links/" + A + "/" + B + "/" + linkid
@@ -76,9 +73,8 @@ def showStats(linkid, privkey):
 
 @app.route('/v/<linkid>/<privkey>')
 def viewLinkID(linkid, privkey):
-	for char in linkid:
-		if(char not in LINK_ID_CHARSET):
-			return "Invalid Link ID", 400
+	if(not isInCSet(linkid, LINK_ID_CHARSET)):
+		return "Invalid Link ID", 400
 	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION, uid=linkid, privkey = privkey)
 
 @app.route("/MIT")
@@ -86,6 +82,14 @@ def license():
 	return Response(open("LICENSE", "r").read(), mimetype="text/plain")
 
 #Extra Functions
+
+# isInCSet ::	This function checks if all of a string's characters
+#				belong in a specified character set
+def isInCSet(target, cset):
+	for char in target:
+		if ( char not in cset ):
+			return False
+	return True
 
 # shortLink ::	This function will shorten a link and return the Link
 #				ID, the Private Key, as well as the full URL of the
