@@ -10,10 +10,12 @@ TITLE = "ShorTor"
 LINK_ID_LENGTH = 8
 LINK_ID_CHARSET = "abcdefghijklmnopqrstuvwxyz1234567890"
 
+VERSION = "0.1"
+
 #Router
 @app.route('/')
 def index():
-	return render_template("index.html", title=TITLE)
+	return render_template("index.html", title=TITLE, version=VERSION)
 
 @app.route('/new', methods=["POST"])
 def shortenLink():
@@ -43,7 +45,7 @@ def viewLinkID(linkid):
 	for char in linkid:
 		if(char not in LINK_ID_CHARSET):
 			return "Invalid Link ID", 400
-	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid))
+	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION)
 
 @app.route("/MIT")
 def license():
