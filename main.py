@@ -36,9 +36,10 @@ def redirectToLink(linkid):
 			return "Invalid Link ID", 400
 	A = linkid[0:2]
 	B = linkid[2:4]
-	if(not os.path.isfile("links/" + A + "/" + B + "/" + linkid)):
+	MainFile = "links/" + A + "/" + B + "/" + linkid
+	if(not os.path.isfile(MainFile)):
 		return "No such Link ID", 404
-	return redirect(open("links/" + A + "/" + B + "/" + linkid, "r").read())
+	return redirect(open(MainFile, "r").read())
 
 @app.route('/v/<linkid>')
 def viewLinkID(linkid):
