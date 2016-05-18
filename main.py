@@ -75,6 +75,8 @@ def showStats(linkid, privkey):
 def viewLinkID(linkid, privkey):
 	if(not isInCSet(linkid, LINK_ID_CHARSET)):
 		return "Invalid Link ID", 400
+	if(not isInCSet(privkey, LINK_ID_CHARSET)):
+		return "Invalid Private Key", 400
 	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION, uid=linkid, privkey = privkey)
 
 @app.route("/MIT")
