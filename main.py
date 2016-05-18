@@ -29,9 +29,7 @@ def shortenLink():
 def redirectToLink(linkid):
 	if(not isInCSet(linkid, LINK_ID_CHARSET)):
 		return "Invalid Link ID", 400
-	A = linkid[0:2]
-	B = linkid[2:4]
-	MainFile = "links/" + A + "/" + B + "/" + linkid
+	MainFile = getMainFile(linkid)
 	if(not os.path.isfile(MainFile)):
 		return "No such Link ID", 404
 	if(not os.path.isfile(MainFile + ".views")):
@@ -54,9 +52,7 @@ def showStats(linkid, privkey):
 		return "Invalid Link ID", 400
 	if(not isInCSet(privkey, LINK_ID_CHARSET)):
 		return "Invalid Private Key", 400
-	A = linkid[0:2]
-	B = linkid[2:4]
-	MainFile = "links/" + A + "/" + B + "/" + linkid
+	MainFile = getMainFile(linkid)
 	if(not os.path.isfile(MainFile)):
 		return "No such Link ID", 404
 	try:
@@ -84,6 +80,13 @@ def license():
 	return Response(open("LICENSE", "r").read(), mimetype="text/plain")
 
 #Extra Functions
+
+# getMainFile ::This function accepts a Link ID and returns the file
+#				path of the main file in the filesystem
+def getMainFile(linkid):
+	A = linkid[0:2]
+	B = linkid[2:4]
+	return "links/" + A + "/" + B + "/" + linkid
 
 # isInCSet ::	This function checks if all of a string's characters
 #				belong in a specified character set
