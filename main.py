@@ -21,6 +21,8 @@ def index():
 def shortenLink():
 	ShortID, PrivKey = shortLink(request)
 	if ShortID == 'Invalid URL' or PrivKey == 400:
+		if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
+			return Response('{\n\t"success":"false"}', mimetype="text/json")
 		return redirect("/")
 	FullURI = getFullURL(ShortID, request)
 	if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
