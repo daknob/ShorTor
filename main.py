@@ -3,6 +3,7 @@
 from flask import *
 from random import randint
 import os
+from httpexceptions import *
 
 #Globals
 app = Flask(__name__)
@@ -10,7 +11,7 @@ TITLE = "ShorTor"
 LINK_ID_LENGTH = 8
 LINK_ID_CHARSET = "abcdefghijklmnopqrstuvwxyz1234567890"
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 #Router
 @app.route('/')
@@ -19,7 +20,11 @@ def index():
 
 @app.route('/new', methods=["POST"])
 def shortenLink():
-	ShortID, PrivKey = shortLink(request)
+	try:
+		ShortID, PrivKey = shortLink(request)
+	except BadInputException as exc:
+		return exc.errormsg, exc.statuscode
+
 	FullURI = getFullURL(ShortID, request)
 	if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
 		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + FullURI + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
@@ -101,9 +106,9 @@ def isInCSet(target, cset):
 #				new link.
 def shortLink(rq):
 	if(not(rq.form['link'])):
-		return "Invalid URL", 400
+		raise BadInputException("Invalid URL", 400)
 	if(invalidURL(rq.form['link'])):
-		return "Invalid URL", 400
+		raise BadInputException("Invalid URL", 400)
 	ShortID, LinkPath = getLinkID()
 	PrivKey, _ = getLinkID()
 	open(LinkPath, "w+").write(rq.form['link'])
@@ -131,6 +136,8 @@ def invalidURL(url):
 	if("\n" in url or "\t" in url):
 		return True
 	if(len(url) > 4096):
+		return True
+	if(len(url) < 7):
 		return True
 	return False
 
