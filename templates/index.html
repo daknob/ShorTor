@@ -1,56 +1,56 @@
 <html>
-	<head>
-		<title>{{ title }}</title>
-		<link rel="stylesheet" href="/static/css/bootstrap.css">
-		<link rel="stylesheet" href="/static/css/style.css">
-	</head>
+    <head>
+        <title>{{ title }}</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/css/style.css">
+    </head>
 
-	<body>
+    <body>
 
-		<div class="row">
-		<div class="col-xs-10 col-xs-offset-1">
-		<nav class="navbar navbar-inverse">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a class="navbar-brand" href="/">ShorTor</a>
-    			</div>
-  			</div>
-		</nav>
-		</div>
-		</div>
+        <div class="row">
+        <div class="col-xs-10 col-xs-offset-1">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">ShorTor</a>
+                </div>
+            </div>
+        </nav>
+        </div>
+        </div>
 
-		<div class="row">
-			<div class="col-xs-10 col-xs-offset-1">
-				<div class="panel panel-default panel-link">
-					<div class="col-xs=10 col-xs-offset-1">
-						<h2>ShorTor</h2>
-					</div>
+        <div class="row">
+            <div class="col-xs-10 col-xs-offset-1">
+                <div class="panel panel-default panel-link">
+                    <div class="col-xs=10 col-xs-offset-1">
+                        <h2>ShorTor</h2>
+                    </div>
 
-					<form class="form-horizontal" action="/new" method="post">
-						<div class="form-group">
-							<div class="col-xs-10 col-xs-offset-1">
-								<input type="text" class="form-control" name="link" placeholder="https://www.facebookcorewwwi.onion/"></input>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="col-xs-10 col-xs-offset-1">
-								<input type="submit" class="btn btn-primary" value="Shorten Link">
-							</div>
-						</div>
-					</form>
-				</div>
-				<div class="panel panel-default">
-					<div class="panel-body">
-				    	&copy; 2016 <a href="https://daknob.net/">Antonios A. Chariton</a>
-						-
-						ShorTor is <a href="https://github.com/DaKnOb/ShorTor">Open Source Software</a>
-						-
-						Licensed under <a href="/MIT">the MIT License</a>
-						-
-						v{{ version }}
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+                    <form class="form-horizontal" action="/new" method="post">
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-1">
+                                <input type="text" class="form-control" name="link" placeholder="https://www.facebookcorewwwi.onion/"></input>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-10 col-xs-offset-1">
+                                <input type="submit" class="btn btn-primary" value="Shorten Link">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        &copy; 2016-2017 <a href="https://daknob.net/">Antonios A. Chariton</a>
+                        -
+                        ShorTor is <a href="https://github.com/DaKnOb/ShorTor">Open Source Software</a>
+                        -
+                        Licensed under <a href="/MIT">the MIT License</a>
+                        -
+                        v{{ version }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
