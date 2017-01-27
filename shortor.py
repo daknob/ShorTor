@@ -16,153 +16,153 @@ VERSION = "0.2.2"
 #Router
 @app.route('/')
 def index():
-	return render_template("index.html", title=TITLE, version=VERSION)
+    return render_template("index.html", title=TITLE, version=VERSION)
 
 @app.route('/new', methods=["POST"])
 def shortenLink():
-	try:
-		ShortID, PrivKey = shortLink(request)
-	except BadInputException as exc:
-		return exc.errormsg, exc.statuscode
+    try:
+        ShortID, PrivKey = shortLink(request)
+    except BadInputException as exc:
+        return exc.errormsg, exc.statuscode
 
-	FullURI = getFullURL(ShortID, request)
-	if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
-		return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + FullURI + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
-	return redirect("/v/" + ShortID + "/" + PrivKey)
+    FullURI = getFullURL(ShortID, request)
+    if(request.headers.get("Accept") and request.headers.get("Accept") == "application/json"):
+        return Response('{\n\t"success":"true",\n\t"id":"' + ShortID + '",\n\t"link":"' + FullURI + '",\n\t"private_key": "' + PrivKey + '"\n}', mimetype="text/json")
+    return redirect("/v/" + ShortID + "/" + PrivKey)
 
 @app.route('/l/<linkid>')
 def redirectToLink(linkid):
-	if(not isInCSet(linkid, LINK_ID_CHARSET)):
-		return "Invalid Link ID", 400
-	MainFile = getMainFile(linkid)
-	if(not os.path.isfile(MainFile)):
-		return "No such Link ID", 404
-	if(not os.path.isfile(MainFile + ".views")):
-		fout = open(MainFile + ".views", "w+")
-		fout.write("1")
-		fout.close()
-	else:
-		fin = open(MainFile + ".views", "r")
-		views = int(fin.read())
-		fin.close()
-		views += 1
-		fout = open(MainFile + ".views", "w+")
-		fout.write(str(views))
-		fout.close()
-	return redirect(open(MainFile, "r").read())
+    if(not isInCSet(linkid, LINK_ID_CHARSET)):
+        return "Invalid Link ID", 400
+    MainFile = getMainFile(linkid)
+    if(not os.path.isfile(MainFile)):
+        return "No such Link ID", 404
+    if(not os.path.isfile(MainFile + ".views")):
+        fout = open(MainFile + ".views", "w+")
+        fout.write("1")
+        fout.close()
+    else:
+        fin = open(MainFile + ".views", "r")
+        views = int(fin.read())
+        fin.close()
+        views += 1
+        fout = open(MainFile + ".views", "w+")
+        fout.write(str(views))
+        fout.close()
+    return redirect(open(MainFile, "r").read())
 
 @app.route('/stats/<linkid>/<privkey>')
 def showStats(linkid, privkey):
-	if(not isInCSet(linkid, LINK_ID_CHARSET)):
-		return "Invalid Link ID", 400
-	if(not isInCSet(privkey, LINK_ID_CHARSET)):
-		return "Invalid Private Key", 400
-	MainFile = getMainFile(linkid)
-	if(not os.path.isfile(MainFile)):
-		return "No such Link ID", 404
-	try:
-		ActPriv = open(MainFile + ".privkey", "r").read()
-	except:
-		return "Link ID has no Private Key", 400
-	if ( not ( ActPriv == privkey ) ):
-		return "Invalid Private Key for Link ID", 403
-	try:
-		Views = open(MainFile + ".views", "r").read()
-	except:
-		Views = 0
-	return render_template("stats.html", title=TITLE, views=Views, version=VERSION)
+    if(not isInCSet(linkid, LINK_ID_CHARSET)):
+        return "Invalid Link ID", 400
+    if(not isInCSet(privkey, LINK_ID_CHARSET)):
+        return "Invalid Private Key", 400
+    MainFile = getMainFile(linkid)
+    if(not os.path.isfile(MainFile)):
+        return "No such Link ID", 404
+    try:
+        ActPriv = open(MainFile + ".privkey", "r").read()
+    except:
+        return "Link ID has no Private Key", 400
+    if ( not ( ActPriv == privkey ) ):
+        return "Invalid Private Key for Link ID", 403
+    try:
+        Views = open(MainFile + ".views", "r").read()
+    except:
+        Views = 0
+    return render_template("stats.html", title=TITLE, views=Views, version=VERSION)
 
 @app.route('/v/<linkid>/<privkey>')
 def viewLinkID(linkid, privkey):
-	if(not isInCSet(linkid, LINK_ID_CHARSET)):
-		return "Invalid Link ID", 400
-	if(not isInCSet(privkey, LINK_ID_CHARSET)):
-		return "Invalid Private Key", 400
-	return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION, uid=linkid, privkey = privkey)
+    if(not isInCSet(linkid, LINK_ID_CHARSET)):
+        return "Invalid Link ID", 400
+    if(not isInCSet(privkey, LINK_ID_CHARSET)):
+        return "Invalid Private Key", 400
+    return render_template("viewlink.html", title=TITLE, link=(request.url_root + 'l/' + linkid), version = VERSION, uid=linkid, privkey = privkey)
 
 @app.route("/MIT")
 def license():
-	return Response(open("LICENSE", "r").read(), mimetype="text/plain")
+    return Response(open("LICENSE", "r").read(), mimetype="text/plain")
 
 #Extra Functions
 
 # getMainFile ::This function accepts a Link ID and returns the file
-#				path of the main file in the filesystem
+#               path of the main file in the filesystem
 def getMainFile(linkid):
-	A = linkid[0:2]
-	B = linkid[2:4]
-	return "links/" + A + "/" + B + "/" + linkid
+    A = linkid[0:2]
+    B = linkid[2:4]
+    return "links/" + A + "/" + B + "/" + linkid
 
-# isInCSet ::	This function checks if all of a string's characters
-#				belong in a specified character set
+# isInCSet ::   This function checks if all of a string's characters
+#               belong in a specified character set
 def isInCSet(target, cset):
-	for char in target:
-		if ( char not in cset ):
-			return False
-	return True
+    for char in target:
+        if ( char not in cset ):
+            return False
+    return True
 
-# shortLink ::	This function will shorten a link and return the Link
-#				ID, the Private Key, as well as the full URL of the
-#				new link.
+# shortLink ::  This function will shorten a link and return the Link
+#               ID, the Private Key, as well as the full URL of the
+#               new link.
 def shortLink(rq):
-	if(not(rq.form['link'])):
-		raise BadInputException("Invalid URL", 400)
-	if(invalidURL(rq.form['link'])):
-		raise BadInputException("Invalid URL", 400)
-	ShortID, LinkPath = getLinkID()
-	PrivKey, _ = getLinkID()
-	open(LinkPath, "w+").write(rq.form['link'])
-	open(LinkPath + ".privkey", "w+").write(PrivKey)
-	return ShortID, PrivKey
+    if(not(rq.form['link'])):
+        raise BadInputException("Invalid URL", 400)
+    if(invalidURL(rq.form['link'])):
+        raise BadInputException("Invalid URL", 400)
+    ShortID, LinkPath = getLinkID()
+    PrivKey, _ = getLinkID()
+    open(LinkPath, "w+").write(rq.form['link'])
+    open(LinkPath + ".privkey", "w+").write(PrivKey)
+    return ShortID, PrivKey
 
-# getFullURL ::	This function will return the full shortened link URL
-#				based on the Link ID and the current request object.
+# getFullURL :: This function will return the full shortened link URL
+#               based on the Link ID and the current request object.
 def getFullURL(linkid, rq):
-	return rq.url_root + "l/" + linkid
+    return rq.url_root + "l/" + linkid
 
 # invalidURL :: This function will perform some *basic* checks on the
-#				provided URL. It will return True if a URL is invalid
-#				but if it returns False there is no guarantee this URL
-#				is valid. It is a very basic and simple function.
+#               provided URL. It will return True if a URL is invalid
+#               but if it returns False there is no guarantee this URL
+#               is valid. It is a very basic and simple function.
 def invalidURL(url):
-	if(url[0:4] != "http"):
-		return True
-	if(url[0:7] != "http://" and url[0:8] != "https://"):
-		return True
-	if(not("." in url)):
-		return True
-	if(" " in url):
-		return True
-	if("\n" in url or "\t" in url):
-		return True
-	if(len(url) > 4096):
-		return True
-	if(len(url) < 7):
-		return True
-	return False
+    if(url[0:4] != "http"):
+        return True
+    if(url[0:7] != "http://" and url[0:8] != "https://"):
+        return True
+    if(not("." in url)):
+        return True
+    if(" " in url):
+        return True
+    if("\n" in url or "\t" in url):
+        return True
+    if(len(url) > 4096):
+        return True
+    if(len(url) < 7):
+        return True
+    return False
 
-# randomID ::	This function will return a randomly generated ID
+# randomID ::   This function will return a randomly generated ID
 def randomID():
-	rid = ""
-	for i in range(0, LINK_ID_LENGTH):
-		rid += LINK_ID_CHARSET[randint(0,len(LINK_ID_CHARSET)-1)]
-	return rid
+    rid = ""
+    for i in range(0, LINK_ID_LENGTH):
+        rid += LINK_ID_CHARSET[randint(0,len(LINK_ID_CHARSET)-1)]
+    return rid
 
-# getLinkID ::	This function returns a unique link ID as well as
-#				the filesystem path where this link will be saved
+# getLinkID ::  This function returns a unique link ID as well as
+#               the filesystem path where this link will be saved
 def getLinkID():
-	ShortID = randomID()
-	A = ShortID[0:2]
-	B = ShortID[2:4]
-	try:
-		os.makedirs("links/"+A+"/"+B)
-	except:
-		pass
-	LinkPath = "links/" + A + "/" + B + "/" + ShortID
-	if(os.path.isfile(LinkPath)):
-		return getLinkID()
-	return ShortID, LinkPath
+    ShortID = randomID()
+    A = ShortID[0:2]
+    B = ShortID[2:4]
+    try:
+        os.makedirs("links/"+A+"/"+B)
+    except:
+        pass
+    LinkPath = "links/" + A + "/" + B + "/" + ShortID
+    if(os.path.isfile(LinkPath)):
+        return getLinkID()
+    return ShortID, LinkPath
 
 #Execution
 if __name__ == '__main__':
-	app.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True)
